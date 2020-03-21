@@ -1,0 +1,156 @@
+---
+title: "Basic Regex Pattern with R"
+author: "Redzuan"
+date: "3/21/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Regular Expression (Regex) is a powerful technique to matching any text string using sequence of character pattern. 
+
+This topic will demonstrate the basic regex pattern which can be developed for specific use case such as to detect, locate, extract and replace pattern in the text. 
+
+
+
+\
+
+![source: [RStudio Regex Cheat Sheet](https://github.com/rstudio/cheatsheets/raw/master/regex.pdf)](../image/regex_application.PNG)
+
+\
+
+## Basic & Mostly Used Special Character in Regex
+
+### Anchors and Special Character
+
+Special character | Meaning
+------------------|-----------------------------------------
+^                 | Start the string
+$                 | End of the string
+.                 | Match any letters, number, white space and any character except "\\"
+\\\\              | Escaping character. Escape any metacharacters (. * + etc.) when searching for actual metacharacters
+
+
+\
+
+
+### Character Classes
+
+Character class is use to match only one out of several characters.
+
+Character Class                 |Description                  |    Example
+--------------------------------|-----------------------------|-------------------------
+[[:digit:]] or \\\\d            |Digits                       | [0-9]
+\\\\w                           |Words, digits & "_" character   | [A-z0-9_]
+[[:lower:]]                     |Lower case letters           | [a-z]
+[[:upper:]]                     |Upper case letters           | [A-Z]
+[[:alpha:]]                     |Alphabetic characters         | [A-z]
+[[:alnum:]]                     |Alphanumeric characters       | [A-z0-9_]
+\\\\s                             |Space, tab, vertical tab, newline, form feed, carriage return | " ", tabs, line breaks
+[[:punct:]]                     |Punctuation characters      |!"#$%&’()*+,-./:;<=>?@[]^_`{|}~
+
+
+
+\
+
+## Character Class Inversion
+
+In the event where the Regex is required to invers the result by original character class such as to exclude number, no special character, no spaces and etc following negation's syntax can be used.
+
+Original                     | Negation
+-----------------------------|----------------------------------
+\\\\d match digits           |\\\\D match non-digits
+\\\\w match word character   |\\\\W match non-words character
+[[:space:]] or \\\\s match space      |[^[:space:]] or \\\\S Match non-space
+[[:punct:]] match punctuation|[^[:punct:]] match non-punctuation
+
+
+
+
+\
+### Repetitions or Quantifiers
+
+Repititions will allow flexible length searches. The same pattern will be able to match the spoecific repeated sequences of characters in the text. This method will allow string "Hello World" and "Helloooooooo World" are matched with the same regex pattern. 
+
+
+Quantifiers          |   Description and Syntax Example
+---------------------|-------------------------------
+*                    |Matches at least 0 times, \\\\w*
++                    |Matches at least 1 time, \\\\w+
+?                    |Matches at most 1 time; optional string. "examples?" pattern will match "example" or "examples"
+{n}                  |Matches exactly n times, \\\\w{2}: Exactly 2 times of word characters
+{n,}                 |Matches at least n times, \\\\w{3,}: Minimum 3 times, no maximum of word characters
+{,n}                 |Matches at most n times, \\\\w{,4}: Minimum 0 times, maximum 4 of word characters
+{n,m}                |Matches between n and m times, \\\\{1,4}: Minimum 1, maximum 4 times of word characters
+
+
+
+
+
+\
+
+
+### Example
+
+Following example will show how the specific regex pattern matches the content in the text. 
+```{r}
+
+library(stringr)
+
+text_sample <- "Hello000 Sir!!, I'm looking for Azman, age: 30, from Rantau Panjang & his phone no. :+6012-3456789({**__mobile__**})"
+
+text_sample
+
+
+#Show the matched pattern with str_view_all (shows all the matches in text).
+
+#Match beginning of the character
+str_view_all(text_sample, pattern = "^.")
+
+#Match end of the character in text
+str_view_all(text_sample, pattern = ".$")
+
+#Match digits pattern
+str_view_all(text_sample, pattern = "\\d")
+
+#Match words pattern
+str_view_all(text_sample, pattern = "\\w")
+
+#Match alphabetic characters
+str_view_all(text_sample, pattern = "[[:alpha:]]")
+
+#Match alphanumeric characters
+str_view_all(text_sample, pattern = "[[:alnum:]]")
+
+#Match punctuation characters
+str_view_all(text_sample, pattern = "[[:punct:]]")
+
+
+#Negation match, match all except space
+str_view_all(text_sample, pattern = "[^[:space:]]")
+
+#Negation match, match all except digits
+str_view_all(text_sample, pattern = "\\D")
+
+
+#Match customized pattern. e.g.: to match age.
+str_view_all(text_sample, pattern = "\\s\\d{2}") #match space followed by exatly 2 digits
+
+
+#Match customized pattern, e.g.: to match phone number
+str_view_all(text_sample, pattern = ".\\d{4}.\\d{7}") #match single "." character, 4 digits, single "." character and 7 digits character in sequence. 
+
+
+
+
+```
+
+
+\
+
+## Further References
+
++ [Regex cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/regex.pdf)
++ [R Regex Tester developed with Shiny App](https://spannbaueradam.shinyapps.io/r_regex_tester/)
